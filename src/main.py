@@ -16,7 +16,20 @@ import numpy as np
 import pickle
 import os
 import matplotlib.pyplot as plt
-from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
+# 尝试多种导入方式，确保在不同平台上都能正常工作
+try:
+    from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
+except ImportError:
+    try:
+        # 尝试直接从matplotlib导入
+        from matplotlib.backends.backend_agg import FigureCanvasAgg
+        from kivy.uix.image import Image
+        from kivy.graphics.texture import Texture
+        # 自定义Canvas类，适配不同平台
+        class FigureCanvasKivyAgg(FigureCanvasAgg):
+            pass
+    except ImportError:
+        FigureCanvasKivyAgg = None
 from datetime import datetime
 
 class MaterialData:
@@ -680,12 +693,21 @@ class DetailScreen(Screen):
         # 调整布局，确保所有元素都能正常显示
         plt.tight_layout()
         
-        # 添加图表到界面
-        canvas = FigureCanvasKivyAgg(fig)
-        self.chart_layout.add_widget(canvas)
-        
-        # 保存当前图表引用，以便后续清理
-        self.current_figure = fig
+        # 添加图表到界面，处理不同平台的兼容性
+        if FigureCanvasKivyAgg is not None:
+            try:
+                canvas = FigureCanvasKivyAgg(fig)
+                self.chart_layout.add_widget(canvas)
+                # 保存当前图表引用，以便后续清理
+                self.current_figure = fig
+            except Exception as e:
+                # 如果图表添加失败，显示错误信息
+                self.chart_layout.add_widget(Label(text=f'图表生成失败: {str(e)}', font_size=dp(16)))
+                plt.close(fig)
+        else:
+            # 如果FigureCanvasKivyAgg不可用，显示提示
+            self.chart_layout.add_widget(Label(text='图表功能暂不可用', font_size=dp(16)))
+            plt.close(fig)
     
     def on_leave(self):
         # 离开页面时清理图表资源，避免内存泄漏
