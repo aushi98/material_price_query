@@ -10,17 +10,13 @@ version = 0.1
 requirements = python3.10,kivy==2.1.0,pandas,numpy,openpyxl,pillow,pygments
 
 # Python for android (p4a) branch to use
-p4a.branch = master
+p4a.branch = main
 
 # Python for android (p4a) python version
 p4a.python_version = 3.10
 
 # Python for android (p4a) bootstrap
 p4a.bootstrap = sdl2
-
-# Buildozer specific
-buildozer.skip_update = True
-buildozer.accept_sdk_license = True
 
 orientation = portrait
 
