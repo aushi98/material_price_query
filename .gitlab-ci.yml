@@ -1,0 +1,45 @@
+image: ubuntu:22.04
+
+stages:
+  - build
+  - deploy
+
+build-apk:
+  stage: build
+  script:
+    - apt-get update && apt-get install -y \
+        python3 \
+        python3-pip \
+        git \
+        wget \
+        unzip \
+        openjdk-11-jdk \
+        libgl1-mesa-glx \
+        libgles2-mesa-dev \
+        libsdl2-dev \
+        libsdl2-image-dev \
+        libsdl2-mixer-dev \
+        libsdl2-ttf-dev \
+        pkg-config
+    - pip3 install --upgrade pip
+    - pip3 install buildozer python-for-android
+    - buildozer --force android debug
+  artifacts:
+    paths:
+      - bin/*.apk
+    expire_in: 1 week
+
+deploy-apk:
+  stage: deploy
+  needs: [build-apk]
+  script:
+    - echo "Deploying APK..."
+    - mkdir -p deploy
+    - cp bin/*.apk deploy/
+  artifacts:
+    paths:
+      - deploy/*.apk
+    expire_in: 1 month
+  only:
+    - main
+    - master

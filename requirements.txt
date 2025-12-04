@@ -1,0 +1,6 @@
+kivy
+pandas
+numpy
+matplotlib
+openpyxl
+pygments
