@@ -17,6 +17,9 @@ p4a.bootstrap = sdl2
 
 orientation = portrait
 
+# Android permissions
+android.permissions = INTERNET,READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,MANAGE_EXTERNAL_STORAGE
+
 # Android specific
 android.api = 34
 android.minapi = 24
