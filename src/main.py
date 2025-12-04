@@ -26,11 +26,20 @@ except ImportError:
 class MaterialData:
     def __init__(self):
         self.data = []
+        # 获取应用程序的私有存储目录
+        if hasattr(os, 'getenv'):
+            app_dir = os.getenv('ANDROID_APP_PATH') or '.'
+        else:
+            app_dir = '.'
+        
+        # 确保目录存在
+        os.makedirs(app_dir, exist_ok=True)
+        
         # 本地数据文件路径，保存在软件文件夹中
-        self.file_path = 'saved_material_data.pkl'
+        self.file_path = os.path.join(app_dir, 'saved_material_data.pkl')
         # 共享数据文件路径 - 与TRAE生成的软件共用数据
         # 在安卓平台上，使用相对路径，与软件安装在同一文件夹
-        self.shared_file_path = 'saved_material_data.pkl'
+        self.shared_file_path = os.path.join(app_dir, 'saved_material_data.pkl')
         self.load_data()
     
     def load_data(self):
@@ -679,6 +688,10 @@ class DetailScreen(Screen):
 
 class MaterialPriceApp(App):
     def build(self):
+        # 添加日志记录，帮助调试
+        import logging
+        logging.basicConfig(level=logging.DEBUG)
+        
         # 请求Android权限
         try:
             from android.permissions import request_permissions, Permission
@@ -689,7 +702,7 @@ class MaterialPriceApp(App):
                 Permission.MANAGE_EXTERNAL_STORAGE
             ])
         except ImportError:
-            pass
+            logging.warning("Android permissions module not available")
         
         self.material_data = MaterialData()
         
