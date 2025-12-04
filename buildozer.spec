@@ -7,7 +7,7 @@ source.dir = src
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
 
-requirements = python3.10,kivy==2.1.0,pandas,numpy,openpyxl,pillow,pygments
+requirements = python3.10,kivy==2.0.0,pandas,numpy,openpyxl,pillow,pygments
 
 p4a.branch = master
 p4a.python_version = 3.10
