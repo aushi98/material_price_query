@@ -44,12 +44,47 @@ jobs:
     
     - name: Build APK
       run: |
+        # 显示详细的环境信息
+        echo "=== Environment Information ==="
+        python --version
+        pip --version
+        java -version
+        
         # 显示buildozer版本
+        echo "\n=== Buildozer Version ==="
         buildozer --version
+        
+        # 显示buildozer.spec文件内容
+        echo "\n=== Buildozer Spec File ==="
+        cat buildozer.spec
+        
+        # 显示当前目录结构
+        echo "\n=== Current Directory Structure ==="
+        ls -la
+        
+        # 显示src目录内容
+        echo "\n=== Source Directory Content ==="
+        ls -la src/
+        
+        # 显示main.py内容
+        echo "\n=== Main Python File ==="
+        cat src/main.py
+        
         # 启用调试日志
+        echo "\n=== Building APK ==="
         buildozer --verbose --force android debug
+        
         # 显示构建输出目录
-        ls -la bin/
+        echo "\n=== Build Output Directory ==="
+        ls -la bin/ 2>/dev/null || echo "bin directory does not exist"
+        
+        # 显示buildozer构建目录
+        echo "\n=== Buildozer Build Directory ==="
+        ls -la .buildozer/ 2>/dev/null || echo ".buildozer directory does not exist"
+        
+        # 显示错误日志（如果存在）
+        echo "\n=== Build Logs ==="
+        cat .buildozer/android/app/build/outputs/logs/build.log 2>/dev/null || echo "Build log does not exist"
     
     - name: Upload APK
       uses: actions/upload-artifact@v4
