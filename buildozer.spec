@@ -37,7 +37,8 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy,pandas,numpy,matplotlib,openpyxl,pillow
+# 指定Python 3.10版本，更稳定兼容
+requirements = python3.10,kivy,pandas,numpy,matplotlib,openpyxl,pillow,pygments
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -45,6 +46,15 @@ requirements = python3,kivy,pandas,numpy,matplotlib,openpyxl,pillow
 
 # (list) Garden requirements
 garden_requirements = kivy.garden.matplotlib
+
+# (bool) Enable AndroidX support
+android.enable_androidx = True
+
+# (list) Gradle dependencies
+android.gradle_dependencies = androidx.appcompat:appcompat:1.4.1,com.google.android.material:material:1.5.0
+
+# (list) add java compile options
+android.add_compile_options = "sourceCompatibility = 1.8", "targetCompatibility = 1.8"
 
 # (str) Presplash of the application
 #presplash.filename = %(source.dir)s/data/presplash.png
@@ -255,6 +265,21 @@ android.add_compile_options = "sourceCompatibility = 11", "targetCompatibility =
 # (list) The Android archs to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
 # In past, was `android.arch` as we weren't supporting builds for multiple archs at the same time.
 android.archs = armeabi-v7a, arm64-v8a
+
+# (str) The format used to package the app for release mode (aab or apk or aar).
+android.release_artifact = apk
+
+# (str) The format used to package the app for debug mode (apk or aar).
+android.debug_artifact = apk
+
+# (bool) Skip byte compile for .py files
+android.no-byte-compile-python = False
+
+# (bool) If True, then skip trying to update the Android sdk 
+android.skip_update = True
+
+# (bool) If True, then automatically accept SDK license agreements. This is intended for automation only.
+android.accept_sdk_license = True
 
 # (int) overrides automatic versionCode computation (used in build.gradle)
 # this is not the same as app version and should only be edited if you know what you're doing

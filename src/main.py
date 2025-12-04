@@ -32,6 +32,12 @@ except ImportError:
         FigureCanvasKivyAgg = None
 from datetime import datetime
 
+# Android平台特定导入
+try:
+    from android.permissions import request_permissions, Permission
+except ImportError:
+    pass
+
 class MaterialData:
     def __init__(self):
         self.data = []
@@ -721,6 +727,18 @@ class DetailScreen(Screen):
 
 class MaterialPriceApp(App):
     def build(self):
+        # 请求Android权限
+        try:
+            from android.permissions import request_permissions, Permission
+            request_permissions([
+                Permission.INTERNET,
+                Permission.READ_EXTERNAL_STORAGE,
+                Permission.WRITE_EXTERNAL_STORAGE,
+                Permission.MANAGE_EXTERNAL_STORAGE
+            ])
+        except ImportError:
+            pass
+        
         self.material_data = MaterialData()
         
         # 创建屏幕管理器
