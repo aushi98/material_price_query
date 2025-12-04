@@ -9,21 +9,14 @@ version = 0.1
 
 requirements = python3.10,kivy==2.1.0,pandas,numpy,openpyxl,pillow,pygments
 
-# Python for android (p4a) branch to use
 p4a.branch = master
-
-# Python for android (p4a) python version
 p4a.python_version = 3.10
-
-# Python for android (p4a) bootstrap
 p4a.bootstrap = sdl2
 
 orientation = portrait
 
-# Android permissions
 android.permissions = INTERNET,READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,MANAGE_EXTERNAL_STORAGE
 
-# Android specific
 android.api = 34
 android.minapi = 24
 android.ndk = 25c
@@ -33,8 +26,7 @@ android.skip_update = True
 android.accept_sdk_license = True
 android.entrypoint = org.kivy.android.PythonActivity
 android.apptheme = "@android:style/Theme.NoTitleBar.Fullscreen"
-android.archs = armeabi-v7a, arm64-v8a
-android.release_artifact = aab
+android.archs = armeabi-v7a
 android.debug_artifact = apk
 android.enable_androidx = True
 android.add_compile_options = "sourceCompatibility = 1.8", "targetCompatibility = 1.8"
