@@ -44,7 +44,12 @@ jobs:
     
     - name: Build APK
       run: |
-        buildozer --force android debug
+        # 显示buildozer版本
+        buildozer --version
+        # 启用调试日志
+        buildozer --verbose --force android debug
+        # 显示构建输出目录
+        ls -la bin/
     
     - name: Upload APK
       uses: actions/upload-artifact@v4

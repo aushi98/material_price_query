@@ -15,21 +15,6 @@ import pandas as pd
 import numpy as np
 import pickle
 import os
-import matplotlib.pyplot as plt
-# 尝试多种导入方式，确保在不同平台上都能正常工作
-try:
-    from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
-except ImportError:
-    try:
-        # 尝试直接从matplotlib导入
-        from matplotlib.backends.backend_agg import FigureCanvasAgg
-        from kivy.uix.image import Image
-        from kivy.graphics.texture import Texture
-        # 自定义Canvas类，适配不同平台
-        class FigureCanvasKivyAgg(FigureCanvasAgg):
-            pass
-    except ImportError:
-        FigureCanvasKivyAgg = None
 from datetime import datetime
 
 # Android平台特定导入
@@ -624,16 +609,16 @@ class DetailScreen(Screen):
         self.detail_info = GridLayout(cols=2, spacing=dp(10), size_hint_y=None, height=dp(200))
         layout.add_widget(self.detail_info)
         
-        # 图表区域
-        self.chart_layout = BoxLayout(orientation='vertical', spacing=dp(10))
-        layout.add_widget(self.chart_layout)
+        # 历史价格列表
+        self.history_layout = BoxLayout(orientation='vertical', spacing=dp(10))
+        layout.add_widget(self.history_layout)
         
         self.add_widget(layout)
     
     def update_detail(self, result, material_data):
         # 清空之前的内容
         self.detail_info.clear_widgets()
-        self.chart_layout.clear_widgets()
+        self.history_layout.clear_widgets()
         
         # 显示详细信息
         self.detail_info.add_widget(Label(text='年月:', font_size=dp(16), bold=True))
@@ -651,75 +636,42 @@ class DetailScreen(Screen):
         self.detail_info.add_widget(Label(text='除税单价:', font_size=dp(16), bold=True))
         self.detail_info.add_widget(Label(text=f"￥{result['除税单价']}", font_size=dp(16)))
         
-        # 生成12个月的价格趋势图
-        self.generate_chart(result, material_data)
+        # 显示历史价格列表
+        self.show_history(result, material_data)
     
-    def generate_chart(self, result, material_data):
+    def show_history(self, result, material_data):
         # 获取该材料的历史数据
         history = material_data.get_material_history(result['材料名称'], result['材料规格'])
         
         if not history:
-            self.chart_layout.add_widget(Label(text='没有足够的数据生成趋势图', font_size=dp(16)))
+            self.history_layout.add_widget(Label(text='没有历史价格数据', font_size=dp(16)))
             return
         
         # 按年月排序
-        history.sort(key=lambda x: x['年月'])
+        history.sort(key=lambda x: x['年月'], reverse=True)
         
         # 获取最近12个月的数据
-        recent_history = history[-12:]
+        recent_history = history[:12]  # 显示最近12条记录
         
-        # 准备图表数据
-        dates = [item['年月'] for item in recent_history]
-        prices = [item['除税单价'] for item in recent_history]
+        # 显示历史价格标题
+        self.history_layout.add_widget(Label(text='最近12个月价格记录:', font_size=dp(16), bold=True))
         
-        # 创建图表，使用适合移动设备的尺寸
-        fig, ax = plt.subplots(figsize=(8, 5), dpi=100)
+        # 使用滚动视图显示历史价格
+        history_scroll = ScrollView()
+        history_list = GridLayout(cols=2, spacing=dp(10), size_hint_y=None)
+        history_list.bind(minimum_height=history_list.setter('height'))
         
-        # 绘制折线图，使用更粗的线条和更大的标记
-        ax.plot(dates, prices, marker='o', linestyle='-', color='#2196F3', linewidth=2, markersize=6)
+        # 添加表头
+        history_list.add_widget(Label(text='年月', font_size=dp(14), bold=True))
+        history_list.add_widget(Label(text='除税单价 (元)', font_size=dp(14), bold=True))
         
-        # 设置图表标题和标签，使用更大的字体
-        ax.set_title(f"{result['材料名称']} - {result['材料规格']} 价格趋势", fontsize=14, fontweight='bold')
-        ax.set_xlabel('年月', fontsize=12)
-        ax.set_ylabel('除税单价 (元)', fontsize=12)
+        # 添加历史价格数据
+        for item in recent_history:
+            history_list.add_widget(Label(text=str(item['年月']), font_size=dp(14)))
+            history_list.add_widget(Label(text=f"￥{item['除税单价']}", font_size=dp(14)))
         
-        # 设置坐标轴刻度，旋转日期标签，使用适合移动设备的字体大小
-        plt.xticks(rotation=45, fontsize=10)
-        plt.yticks(fontsize=10)
-        
-        # 添加网格线，使用虚线样式
-        ax.grid(True, linestyle='--', alpha=0.7)
-        
-        # 为每个数据点添加数值标签
-        for i, (date, price) in enumerate(zip(dates, prices)):
-            ax.annotate(f"{price:.2f}", (date, price), 
-                       xytext=(0, 5), textcoords='offset points', 
-                       ha='center', fontsize=9)
-        
-        # 调整布局，确保所有元素都能正常显示
-        plt.tight_layout()
-        
-        # 添加图表到界面，处理不同平台的兼容性
-        if FigureCanvasKivyAgg is not None:
-            try:
-                canvas = FigureCanvasKivyAgg(fig)
-                self.chart_layout.add_widget(canvas)
-                # 保存当前图表引用，以便后续清理
-                self.current_figure = fig
-            except Exception as e:
-                # 如果图表添加失败，显示错误信息
-                self.chart_layout.add_widget(Label(text=f'图表生成失败: {str(e)}', font_size=dp(16)))
-                plt.close(fig)
-        else:
-            # 如果FigureCanvasKivyAgg不可用，显示提示
-            self.chart_layout.add_widget(Label(text='图表功能暂不可用', font_size=dp(16)))
-            plt.close(fig)
-    
-    def on_leave(self):
-        # 离开页面时清理图表资源，避免内存泄漏
-        if hasattr(self, 'current_figure'):
-            plt.close(self.current_figure)
-            del self.current_figure
+        history_scroll.add_widget(history_list)
+        self.history_layout.add_widget(history_scroll)
     
     def go_back(self, instance):
         app = App.get_running_app()

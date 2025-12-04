@@ -45,13 +45,15 @@ requirements = python3.10,kivy,pandas,numpy,matplotlib,openpyxl,pillow,pygments
 # requirements.source.kivy = ../../kivy
 
 # (list) Garden requirements
-garden_requirements = kivy.garden.matplotlib
+# 移除garden依赖，避免构建问题
+#garden_requirements =
 
 # (bool) Enable AndroidX support
 android.enable_androidx = True
 
 # (list) Gradle dependencies
-android.gradle_dependencies = androidx.appcompat:appcompat:1.4.1,com.google.android.material:material:1.5.0
+# 简化gradle依赖
+android.gradle_dependencies = 
 
 # (list) add java compile options
 android.add_compile_options = "sourceCompatibility = 1.8", "targetCompatibility = 1.8"
