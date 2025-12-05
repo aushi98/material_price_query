@@ -14,9 +14,9 @@ p4a.bootstrap = sdl2
 
 orientation = portrait
 
-android.permissions = INTERNET
+android.permissions = INTERNET,READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,MANAGE_EXTERNAL_STORAGE
 
-android.api = 29
+android.api = 31
 android.minapi = 24
 android.ndk = 25c
 android.private_storage = True
@@ -26,6 +26,7 @@ android.entrypoint = org.kivy.android.PythonActivity
 android.archs = armeabi-v7a
 android.debug_artifact = apk
 android.release_artifact = apk
+android.build_tools_version = 31.0.0
 
 [buildozer]
 log_level = 2

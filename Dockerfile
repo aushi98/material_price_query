@@ -31,12 +31,5 @@ WORKDIR /app
 # 复制项目文件
 COPY . /app
 
-# 配置buildozer
-RUN buildozer init || true
-
-# 设置环境变量
-ENV ANDROID_SDK_ROOT=/root/.buildozer/android/platform/android-sdk
-ENV ANDROID_NDK_ROOT=/root/.buildozer/android/platform/android-ndk
-
-# 构建命令
-CMD ["buildozer", "--force", "android", "debug"]
+# 构建APK
+CMD ["buildozer", "--verbose", "--force", "android", "debug"]
