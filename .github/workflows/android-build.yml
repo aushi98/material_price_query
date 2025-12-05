@@ -70,9 +70,13 @@ jobs:
         echo "\n=== Main Python File ==="
         cat src/main.py
         
-        # 启用调试日志
+        # 显示buildozer配置
+        echo "\n=== Buildozer Configuration ==="
+        buildozer --verbose android debug --dry-run
+        
+        # 启用调试日志并将输出保存到文件
         echo "\n=== Building APK ==="
-        buildozer --verbose --force android debug
+        buildozer --verbose --force android debug > build.log 2>&1
         
         # 显示构建输出目录
         echo "\n=== Build Output Directory ==="
@@ -82,9 +86,18 @@ jobs:
         echo "\n=== Buildozer Build Directory ==="
         ls -la .buildozer/ 2>/dev/null || echo ".buildozer directory does not exist"
         
-        # 显示错误日志（如果存在）
+        # 显示构建日志
         echo "\n=== Build Logs ==="
-        cat .buildozer/android/app/build/outputs/logs/build.log 2>/dev/null || echo "Build log does not exist"
+        tail -n 200 build.log
+        
+        # 显示buildozer构建日志
+        echo "\n=== Buildozer Build Log ==="
+        ls -la .buildozer/android/logs/ 2>/dev/null || echo ".buildozer/android/logs/ directory does not exist"
+        cat .buildozer/android/logs/build.log 2>/dev/null || echo "Build log does not exist"
+        
+        # 显示gradle构建日志
+        echo "\n=== Gradle Build Log ==="
+        cat .buildozer/android/app/build/outputs/logs/build.log 2>/dev/null || echo "Gradle build log does not exist"
     
     - name: Upload APK
       uses: actions/upload-artifact@v4
