@@ -66,6 +66,7 @@ jobs:
         # Create buildozer android sdk directory if it doesn't exist
         mkdir -p $HOME/.buildozer/android/platform/android-sdk
         mkdir -p $HOME/.buildozer/android/platform/android-sdk/tools/bin
+        mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools
         
         # Create symbolic links to make SDK accessible to Buildozer
         ln -s $HOME/android-sdk/build-tools $HOME/.buildozer/android/platform/android-sdk/build-tools
@@ -78,6 +79,7 @@ jobs:
         
         # Verify the links exist
         ls -la $HOME/.buildozer/android/platform/android-sdk/tools/bin/
+        ls -la $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/
     
     - name: Build APK
       run: |
