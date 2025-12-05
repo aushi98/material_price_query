@@ -1,10 +1,10 @@
 [app]
 
-title = 建筑材料价格查询
+title = Material Price Query
 package.name = materialprice
 package.domain = com.example
 source.dir = src
-source.include_exts = py,png,jpg,kv,atlas
+source.include_exts = py
 version = 0.1
 
 requirements = python3.10,kivy==2.0.0
